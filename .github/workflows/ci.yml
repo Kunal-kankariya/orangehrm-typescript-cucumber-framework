@@ -33,12 +33,10 @@ jobs:
           BROWSER: chromium
           HEADLESS: true
         run: npm test
-        continue-on-error: true
 
       - name: Generate HTML report
         if: always()
         run: npm run report || echo "Report generation skipped"
-        continue-on-error: true
 
       - name: Upload test results
         if: always()
