@@ -13,6 +13,7 @@ import { CustomWorld } from '../../src/fixtures/customWorld';
 import { log } from '../../src/utils/logger';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 // Set custom world constructor
 setWorldConstructor(CustomWorld);
@@ -68,9 +69,67 @@ After(async function (this: CustomWorld, { pickle, result }) {
   log.scenario.end(pickle.name, status);
   log.info(`Duration: ${duration}ms`);
 
-  // Take screenshot on failure
-  if (status === Status.FAILED && process.env.SCREENSHOT_ON_FAILURE === 'true') {
-    await this.attachScreenshot(`failure-${pickle.name}-${Date.now()}`);
+  // Always take screenshot and video on failure
+  if (status === Status.FAILED) {
+    try {
+      // Take screenshot
+      const screenshotPath = path.join(
+        process.cwd(),
+        'screenshots',
+        `failure-${pickle.name.replace(/\s+/g, '-')}-${Date.now()}.png`
+      );
+
+      // Ensure screenshots directory exists
+      const screenshotDir = path.dirname(screenshotPath);
+      if (!fs.existsSync(screenshotDir)) {
+        fs.mkdirSync(screenshotDir, { recursive: true });
+      }
+
+      if (this.page) {
+        const screenshot = await this.page.screenshot({ path: screenshotPath, fullPage: true });
+
+        // Attach to Cucumber report
+        await this.attach(screenshot, 'image/png');
+
+        // Attach to Allure report
+        if (fs.existsSync(screenshotPath)) {
+          await this.attach(fs.readFileSync(screenshotPath), {
+            mediaType: 'image/png',
+            fileName: `failure-screenshot-${Date.now()}.png`
+          });
+        }
+
+        log.info(`📸 Screenshot saved: ${screenshotPath}`);
+      }
+
+      // Attach video path if video recording is enabled
+      if (this.context) {
+        const videoPath = await this.page?.video()?.path();
+        if (videoPath && fs.existsSync(videoPath)) {
+          log.info(`🎥 Video saved: ${videoPath}`);
+
+          // Wait for video to be saved
+          await this.page?.close();
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Attach video to report
+          if (fs.existsSync(videoPath)) {
+            await this.attach(fs.readFileSync(videoPath), {
+              mediaType: 'video/webm',
+              fileName: `failure-video-${Date.now()}.webm`
+            });
+          }
+        }
+      }
+
+      // Attach error message and stack trace to Allure
+      if (result?.message) {
+        await this.attach(`Error: ${result.message}`, 'text/plain');
+      }
+
+    } catch (error) {
+      log.error(`Failed to capture screenshot/video: ${error}`);
+    }
   }
 
   // Cleanup browser resources

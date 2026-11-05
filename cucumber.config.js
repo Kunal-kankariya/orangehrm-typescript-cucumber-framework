@@ -10,7 +10,8 @@ const common = {
     snippetInterface: 'async-await'
   },
   dryRun: false,
-  parallel: 1
+  parallel: 1,
+  publishQuiet: true
 };
 
 module.exports = {

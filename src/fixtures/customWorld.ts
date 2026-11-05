@@ -51,11 +51,13 @@ export class CustomWorld extends World {
         this.browser = await chromium.launch({ headless });
     }
 
-    // Create context
+    // Create context with video recording
     this.context = await this.browser.newContext({
       viewport: { width: 1920, height: 1080 },
-      recordVideo:
-        process.env.VIDEO_ON_FAILURE === 'true' ? { dir: 'reports/videos' } : undefined
+      recordVideo: {
+        dir: 'videos',
+        size: { width: 1920, height: 1080 }
+      }
     });
 
     // Create page
