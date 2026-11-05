@@ -16,10 +16,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chromium]
-        shard: [1/4, 2/4, 3/4, 4/4]
 
     steps:
       - name: Checkout code
@@ -34,35 +30,28 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install ${{ matrix.browser }} --with-deps
+        run: npx playwright install chromium --with-deps
 
-      - name: Install Allure
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
-          npm install -g allure-commandline --save-dev
-
-      - name: Run tests in parallel (Shard ${{ matrix.shard }})
+      - name: Run tests
         env:
           ENV: qa
-          BROWSER: ${{ matrix.browser }}
+          BROWSER: chromium
           HEADLESS: true
-        run: npm run test:parallel
+        run: npm test
 
       - name: Generate HTML report
         if: always()
         run: npm run report || echo "Report generation skipped"
 
-      - name: Generate Allure report
+      - name: Generate Allure results
         if: always()
-        run: |
-          npm run allure:generate || echo "Allure report generation skipped"
+        run: npm run allure:convert || echo "Allure conversion skipped"
 
       - name: Upload screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots-${{ matrix.browser }}-${{ matrix.shard }}
+          name: screenshots
           path: screenshots/
           retention-days: 7
 
@@ -70,7 +59,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: videos-${{ matrix.browser }}-${{ matrix.shard }}
+          name: videos
           path: videos/
           retention-days: 7
 
@@ -78,7 +67,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: html-reports-${{ matrix.shard }}
+          name: html-reports
           path: reports/
           retention-days: 30
 
@@ -86,7 +75,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.shard }}
+          name: allure-results
           path: allure-results/
           retention-days: 30
 
@@ -100,20 +89,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download all Allure results
+      - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
-          pattern: allure-results-*
+          name: allure-results
           path: allure-results
-          merge-multiple: true
+
+      - name: Install Java (required for Allure)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install Allure
         run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
-          npm install -g allure-commandline --save-dev
+          wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz
+          tar -zxvf allure-2.32.0.tgz
+          sudo mv allure-2.32.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
-      - name: Generate combined Allure report
+      - name: Generate Allure report
         run: allure generate allure-results --clean -o allure-report
 
       - name: Deploy Allure report to GitHub Pages
@@ -123,10 +118,10 @@ jobs:
           publish_dir: ./allure-report
           destination_dir: allure-report
 
-      - name: Upload combined Allure report
+      - name: Upload Allure report
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-combined
+          name: allure-report
           path: allure-report/
           retention-days: 30
 
@@ -151,9 +146,8 @@ jobs:
       - name: Download HTML reports
         uses: actions/download-artifact@v4
         with:
-          pattern: html-reports-*
+          name: html-reports
           path: reports
-          merge-multiple: true
 
       - name: Send Email Report
         env:
@@ -161,7 +155,44 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: npm run email:report || echo "Email sending skipped (credentials not configured)"
 
-      - name: Send notification
-        if: failure()
-        run: |
-          echo "::notice title=Tests Failed::Some tests failed. Check the Allure report for details."
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            let summary = '## 📊 Test Execution Summary\n\n';
+
+            try {
+              const reportPath = 'reports/json/cucumber-report.json';
+              if (fs.existsSync(reportPath)) {
+                const data = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+                let total = 0, passed = 0, failed = 0;
+
+                data.forEach(feature => {
+                  feature.elements.forEach(scenario => {
+                    total++;
+                    const hasFailed = scenario.steps.some(step => step.result.status === 'failed');
+                    if (hasFailed) failed++;
+                    else passed++;
+                  });
+                });
+
+                const passRate = ((passed / total) * 100).toFixed(2);
+                summary += `- **Total Scenarios:** ${total}\n`;
+                summary += `- **✅ Passed:** ${passed}\n`;
+                summary += `- **❌ Failed:** ${failed}\n`;
+                summary += `- **Pass Rate:** ${passRate}%\n\n`;
+                summary += failed > 0 ? '❌ **Status:** FAILED\n' : '✅ **Status:** PASSED\n';
+              }
+            } catch (error) {
+              summary += '⚠️ Could not parse test results\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
