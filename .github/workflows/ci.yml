@@ -53,15 +53,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Upload videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: videos
-          path: videos/
-          if-no-files-found: ignore
-          retention-days: 7
-
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -84,6 +75,5 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Artifacts Available:" >> $GITHUB_STEP_SUMMARY
-          echo "- 📸 Screenshots (if failures)" >> $GITHUB_STEP_SUMMARY
-          echo "- 🎥 Videos (if failures)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📸 Screenshots (on failures)" >> $GITHUB_STEP_SUMMARY
           echo "- 📊 Test Reports (HTML & JSON)" >> $GITHUB_STEP_SUMMARY
