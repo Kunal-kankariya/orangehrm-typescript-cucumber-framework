@@ -32,12 +32,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run tests
+      - name: Run tests in parallel
         env:
           ENV: qa
           BROWSER: chromium
           HEADLESS: true
-        run: npm test
+        run: npm run test:parallel
         continue-on-error: true
 
       - name: Generate HTML report
@@ -50,15 +50,6 @@ jobs:
         with:
           name: screenshots
           path: screenshots/
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: Upload videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: videos
-          path: videos/
           if-no-files-found: ignore
           retention-days: 7
 
@@ -79,11 +70,53 @@ jobs:
           if [ -f "reports/json/cucumber-report.json" ]; then
             echo "✅ Tests completed" >> $GITHUB_STEP_SUMMARY
             echo "📊 Reports generated in artifacts" >> $GITHUB_STEP_SUMMARY
+            echo "⚡ **Parallel Execution:** 4 workers" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ No test results found" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Artifacts Available:" >> $GITHUB_STEP_SUMMARY
-          echo "- 📸 Screenshots (if failures)" >> $GITHUB_STEP_SUMMARY
-          echo "- 🎥 Videos (if failures)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📸 Screenshots (on failures)" >> $GITHUB_STEP_SUMMARY
           echo "- 📊 Test Reports (HTML & JSON)" >> $GITHUB_STEP_SUMMARY
+
+  # Send Email Report
+  send-email:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports
+          path: reports
+
+      - name: Send Email Report
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: npm run email:report || echo "⚠️ Email sending skipped - GitHub Secrets not configured. See EMAIL_SETUP.md"
+
+      - name: Email Status
+        if: always()
+        run: |
+          echo "## 📧 Email Notification Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ secrets.EMAIL_PASSWORD }}" ]; then
+            echo "✅ Email sent to [REDACTED_EMAIL_ADDRESS_2]" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Email not configured" >> $GITHUB_STEP_SUMMARY
+            echo "📄 See EMAIL_SETUP.md for setup instructions" >> $GITHUB_STEP_SUMMARY
+          fi

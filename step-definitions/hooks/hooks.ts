@@ -69,7 +69,7 @@ After(async function (this: CustomWorld, { pickle, result }) {
   log.scenario.end(pickle.name, status);
   log.info(`Duration: ${duration}ms`);
 
-  // Always take screenshot and video on failure
+  // Take screenshot on failure
   if (status === Status.FAILED) {
     try {
       // Take screenshot
@@ -91,44 +91,16 @@ After(async function (this: CustomWorld, { pickle, result }) {
         // Attach to Cucumber report
         await this.attach(screenshot, 'image/png');
 
-        // Attach to Allure report
-        if (fs.existsSync(screenshotPath)) {
-          await this.attach(fs.readFileSync(screenshotPath), {
-            mediaType: 'image/png',
-            fileName: `failure-screenshot-${Date.now()}.png`
-          });
-        }
-
         log.info(`📸 Screenshot saved: ${screenshotPath}`);
       }
 
-      // Attach video path if video recording is enabled
-      if (this.context) {
-        const videoPath = await this.page?.video()?.path();
-        if (videoPath && fs.existsSync(videoPath)) {
-          log.info(`🎥 Video saved: ${videoPath}`);
-
-          // Wait for video to be saved
-          await this.page?.close();
-          await new Promise(resolve => setTimeout(resolve, 1000));
-
-          // Attach video to report
-          if (fs.existsSync(videoPath)) {
-            await this.attach(fs.readFileSync(videoPath), {
-              mediaType: 'video/webm',
-              fileName: `failure-video-${Date.now()}.webm`
-            });
-          }
-        }
-      }
-
-      // Attach error message and stack trace to Allure
+      // Attach error message
       if (result?.message) {
         await this.attach(`Error: ${result.message}`, 'text/plain');
       }
 
     } catch (error) {
-      log.error(`Failed to capture screenshot/video: ${error}`);
+      log.error(`Failed to capture screenshot: ${error}`);
     }
   }
 
