@@ -1,216 +1,310 @@
-# OrangeHRM Automation - Playwright + Cucumber + TypeScript
+# 🧪 OrangeHRM TypeScript Cucumber Framework
 
-Enterprise-grade test automation framework for **OrangeHRM** using Playwright, Cucumber (BDD), and TypeScript.
+![Tests](https://github.com/Kunal-kankariya/orangehrm-typescript-cucumber-framework/actions/workflows/ci.yml/badge.svg)
+![Playwright](https://img.shields.io/badge/Playwright-1.49-green)
+![Cucumber](https://img.shields.io/badge/Cucumber-11.0-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![Node](https://img.shields.io/badge/Node-18+-green)
+![License](https://img.shields.io/badge/License-ISC-blue)
 
-## 🎯 Project Overview
+**Enterprise-grade Test Automation Framework** with Playwright, Cucumber, TypeScript, and BDD
 
-This framework automates testing for **OrangeHRM** - an open-source Human Resource Management system.
+---
 
-**Application Under Test:** https://opensource-demo.orangehrmlive.com/
+## 🚀 Features
 
-## ✨ Features
+### Core Framework
+- ✅ **Playwright** - Modern browser automation
+- ✅ **Cucumber** - BDD with Gherkin syntax
+- ✅ **TypeScript** - Type-safe code
+- ✅ **Page Object Model** - Scalable architecture
+- ✅ **BasePage Pattern** - Reusable utilities
+- ✅ **Winston Logger** - Professional logging
+- ✅ **Multi-Environment** - Dev/QA/Staging configs
 
-- ✅ **TypeScript** - Type-safe test automation
-- ✅ **BDD with Cucumber** - Gherkin syntax for readable tests
-- ✅ **Page Object Model** - Maintainable and scalable
-- ✅ **Advanced Logging** - Winston logger with daily rotation
-- ✅ **Screenshot on Failure** - Automatic failure capturing
-- ✅ **HTML Reports** - Beautiful test reports
-- ✅ **CI/CD Ready** - GitHub Actions workflow included
-- ✅ **Multi-Environment Support** - dev, qa, staging configs
+### Advanced Features ✨
+- ✨ **Allure Reports** - Beautiful interactive dashboards
+- 📧 **Email Notifications** - Auto-send test results
+- 👁️ **Visual Regression** - Screenshot comparison
+- ⚡ **Parallel Execution** - 4x faster tests
+- 📸 **Auto Screenshots** - Capture failures
+- 🎥 **Video Recording** - Record failed tests
+- ⏰ **Scheduled Runs** - Nightly/Weekly automation
+- 🤖 **GitHub Copilot** - AI code reviews
 
-## 🛠 Tech Stack
+---
 
-- **Playwright** v1.49.0 - Browser automation
-- **Cucumber** v11.0.1 - BDD framework
-- **TypeScript** v5.7.2 - Type safety
-- **Winston** v3.17.0 - Logging
-- **Node.js** >= 18.x
-
-## 📦 Installation
+## 📦 Quick Start
 
 ### Prerequisites
-- Node.js >= 18.x
-- npm >= 9.x
+- Node.js 18+
+- npm or yarn
+- Git
 
-### Setup Steps
+### Installation
 
-1. **Clone the repository**
 ```bash
-git clone <your-repo-url>
-cd practice_ui_playwright_project
-```
+# Clone repository
+git clone https://github.com/Kunal-kankariya/orangehrm-typescript-cucumber-framework.git
 
-2. **Install dependencies**
-```bash
+# Navigate to project
+cd orangehrm-typescript-cucumber-framework
+
+# Install dependencies
 npm install
-```
 
-3. **Install Playwright browsers**
-```bash
+# Install Playwright browsers
 npx playwright install chromium
 ```
 
-## ⚙️ Configuration
+### Run Tests
 
-### Environment Variables
-
-Default credentials for OrangeHRM (already configured in `.env`):
-```env
-TEST_USERNAME=Admin
-TEST_PASSWORD=[REDACTED_GENERIC_PASSWORD_1]
-```
-
-### Browser Settings
-```env
-BROWSER=chromium          # chromium, firefox, webkit
-HEADLESS=false           # Set to true for headless mode
-LOG_LEVEL=info           # debug, info, warn, error
-```
-
-## 🚀 Running Tests
-
-### Run all login tests
 ```bash
+# Run all tests
 npm test
-```
 
-### Run with specific tags
-```bash
-# Run only smoke tests
+# Run with specific environment
+npm run test:qa
+
+# Run smoke tests only
 npm run test:smoke
 
-# Run only positive tests
-npx cucumber-js --tags "@positive"
-
-# Run only critical tests
-npx cucumber-js --tags "@critical"
-
-# Run negative tests
-npx cucumber-js --tags "@negative"
-```
-
-### Run in different environments
-```bash
-npm run test:dev
-npm run test:qa
-npm run test:staging
-```
-
-### Run in parallel
-```bash
+# Run in parallel (4 workers)
 npm run test:parallel
+
+# Run regression tests
+npm run test:regression
 ```
 
-### Run specific feature
-```bash
-npx cucumber-js features/login/login.feature
-```
-
-### Run specific scenario (by line number)
-```bash
-npx cucumber-js features/login/login.feature:10
-```
+---
 
 ## 📊 Reports
 
-### Generate HTML Report
+### Cucumber HTML Report
 ```bash
 npm run report
+open reports/html/cucumber-report.html
 ```
 
-Reports are generated in:
-- **HTML Report:** `reports/html/cucumber-report.html`
-- **JSON Report:** `reports/json/cucumber-report.json`
-- **Logs:** `reports/logs/test-execution-YYYY-MM-DD.log`
-- **Screenshots:** `reports/screenshots/` (on failure)
-
-### View Reports
-After running tests, open:
+### Allure Report (New! ✨)
 ```bash
-start reports/html/cucumber-report.html
+# Generate and open Allure report
+npm run allure:serve
+
+# Or generate separately
+npm run allure:generate
+npm run allure:open
 ```
 
-## 📁 Project Structure
+### Email Report (New! 📧)
+```bash
+# Send email with test results
+npm run email:report
+```
+
+**View Reports Online:**
+- 📊 Allure Dashboard: https://kunal-kankariya.github.io/orangehrm-typescript-cucumber-framework/allure-report
+
+---
+
+## 🏗️ Project Structure
 
 ```
-practice_ui_playwright_project/
-├── src/
-│   ├── pages/
-│   │   ├── base/
-│   │   │   └── BasePage.ts          # Base page with wrapper methods
-│   │   └── login/
-│   │       └── LoginPage.ts         # OrangeHRM login page
-│   ├── components/
-│   │   └── Header.ts                # Reusable components
-│   ├── fixtures/
-│   │   └── customWorld.ts           # Cucumber World
-│   ├── utils/
-│   │   └── logger.ts                # Winston logger
-│   ├── config/
-│   │   └── env/
-│   │       ├── dev.env              # Dev environment config
-│   │       ├── qa.env
-│   │       └── staging.env
-│   └── types/
-│       ├── index.d.ts               # Global types
-│       └── custom.d.ts              # Cucumber World types
-├── features/
+📂 orangehrm-typescript-cucumber-framework/
+├── 📂 features/                    # Feature files (Gherkin)
 │   └── login/
-│       └── login.feature            # Login test scenarios
-├── step-definitions/
-│   ├── hooks/
-│   │   └── hooks.ts                 # Before/After hooks
-│   ├── login/
-│   │   └── loginSteps.ts            # Login step definitions
-│   └── common/
-│       └── commonSteps.ts           # Reusable steps
-├── test-data/
-│   └── json/
-│       └── users.json               # Test user data
-├── reports/                         # Test reports
-├── .github/
-│   └── workflows/
-│       └── ci.yml                   # GitHub Actions CI/CD
-├── package.json
-├── tsconfig.json
-├── cucumber.config.js
-├── .env
-└── README.md
+│       ├── login.feature
+│       └── visual-regression.feature
+├── 📂 step-definitions/           # Step definitions
+│   ├── hooks/                     # Cucumber hooks
+│   ├── login/                     # Login steps
+│   └── common/                    # Common steps
+├── 📂 src/
+│   ├── 📂 pages/                  # Page Object Model
+│   │   ├── base/                  # BasePage
+│   │   ├── login/                 # LoginPage
+│   │   └── components/            # Reusable components
+│   ├── 📂 utils/                  # Utilities
+│   │   ├── logger.ts              # Winston logger
+│   │   └── visualRegression.ts   # Visual testing (New!)
+│   ├── 📂 config/                 # Configuration
+│   │   └── env/                   # Environment configs
+│   ├── 📂 fixtures/               # Test fixtures
+│   │   └── customWorld.ts         # Cucumber World
+│   └── 📂 types/                  # TypeScript types
+├── 📂 test-data/                  # Test data (JSON/CSV)
+├── 📂 scripts/                    # Utility scripts
+│   ├── generate-report.js
+│   ├── generate-allure-results.js    # Allure converter (New!)
+│   └── send-email-report.js          # Email sender (New!)
+├── 📂 .github/workflows/          # GitHub Actions
+│   ├── ci.yml                     # Main CI/CD pipeline
+│   └── copilot-review.yml         # Copilot code review
+├── 📄 README.md                   # This file
+└── 📄 SETUP.md                    # Advanced features setup
 ```
 
-## 🧪 Test Scenarios
+---
 
-### Login Feature (`features/login/login.feature`)
+## 🎯 Architecture
 
-Current test scenarios:
-- ✅ **Positive Tests:**
-  - Login with valid credentials (step-by-step)
-  - Login with valid credentials (using login method)
-  
-- ✅ **Negative Tests:**
-  - Login with invalid username
-  - Login with invalid password
-  - Login with empty credentials
-  
-- ✅ **UI Tests:**
-  - Verify login page elements
+### Page Object Model (POM)
 
-## 🔧 Development Commands
-
-### Type Checking
-```bash
-npm run type-check
+**BasePage** - Common methods for all pages
+```typescript
+class BasePage {
+  click(), fill(), waitForElement(), getText()
+  scrollToElement(), takeScreenshot(), etc.
+}
 ```
 
-### Linting
+**LoginPage** extends BasePage
+```typescript
+class LoginPage extends BasePage {
+  async login(username, password) { ... }
+  async enterUsername() { ... }
+}
+```
+
+---
+
+## 🧪 Writing Tests
+
+### Feature File (Gherkin)
+```gherkin
+@smoke @login
+Feature: User Login
+  
+  Scenario: Valid login
+    Given I am on the OrangeHRM login page
+    When I enter username "Admin"
+    And I enter password "[REDACTED_GENERIC_PASSWORD_1]"
+    And I click the login button
+    Then I should see the dashboard
+```
+
+### Step Definition (TypeScript)
+```typescript
+Given('I am on the OrangeHRM login page', async function(this: CustomWorld) {
+  await this.loginPage.navigate();
+});
+
+When('I enter username {string}', async function(this: CustomWorld, username: string) {
+  await this.loginPage.enterUsername(username);
+});
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Files
+- `src/config/env/dev.env` - Development
+- `src/config/env/qa.env` - QA
+- `src/config/env/staging.env` - Staging
+
+```env
+BASE_URL=https://opensource-demo.orangehrmlive.com
+BROWSER=chromium
+HEADLESS=true
+```
+
+---
+
+## 🔄 CI/CD Pipeline
+
+### GitHub Actions Workflow
+
+**Triggers:**
+- Push to `main` or `develop`
+- Pull requests
+- Scheduled runs (nightly at 2 AM UTC, weekly on Sunday 6 AM UTC)
+- Manual trigger
+
+**Features:**
+- ✅ Parallel execution (4 shards)
+- ✅ Multi-browser support
+- ✅ Screenshot & video capture
+- ✅ Allure report generation
+- ✅ Deploy to GitHub Pages
+- ✅ Email notifications
+- ✅ Artifact uploads
+
+---
+
+## 📧 Email Notifications (New! ✨)
+
+Automatic email reports sent to: `[REDACTED_EMAIL_ADDRESS_2]`
+
+**Setup:**
+1. Generate Gmail app password
+2. Add GitHub Secrets:
+   - `EMAIL_USER`: [REDACTED_EMAIL_ADDRESS_2]
+   - `EMAIL_PASSWORD`: your-app-password
+3. See `SETUP.md` for detailed instructions
+
+---
+
+## 👁️ Visual Regression Testing (New! ✨)
+
+```typescript
+import { VisualRegression } from './src/utils/visualRegression';
+
+const visualTest = new VisualRegression();
+
+// Compare with baseline
+const result = await visualTest.compareScreenshot(
+  page, 
+  'login-page',
+  { threshold: 0.1, fullPage: true }
+);
+```
+
+**Features:**
+- Screenshot comparison
+- Pixel-level difference detection
+- Configurable thresholds
+- Mask dynamic elements
+- Auto-baseline management
+
+---
+
+## 📈 Test Reports Features
+
+### Allure Report Includes:
+- ✅ Pass/Fail statistics
+- ✅ Duration metrics & trends
+- ✅ Test trend analysis (historical data)
+- ✅ Flaky test detection
+- ✅ Screenshot attachments
+- ✅ Video recordings
+- ✅ Step-by-step execution logs
+- ✅ Environment information
+
+### Email Report Includes:
+- ✅ Beautiful HTML template
+- ✅ Pass/Fail metrics with percentages
+- ✅ Test duration
+- ✅ Environment details
+- ✅ JSON report attachment
+
+---
+
+## 🛠️ Development
+
+### Run Linting
 ```bash
 npm run lint
 ```
 
-### Code Formatting
+### Format Code
 ```bash
 npm run format
+```
+
+### Type Check
+```bash
+npm run type-check
 ```
 
 ### Clean Reports
@@ -218,149 +312,114 @@ npm run format
 npm run clean
 ```
 
-## 🎨 Writing New Tests
+---
 
-### 1. Add Scenario to Feature File
+## 📚 Documentation
 
-```gherkin
-@positive @smoke
-Scenario: New test scenario
-  Given I am on the login page
-  When I perform some action
-  Then I should see expected result
-```
+- **README.md** - This file (Quick start & overview)
+- **SETUP.md** - Advanced features setup guide
+- **PULL_REQUEST_TEMPLATE.md** - PR template
 
-### 2. Implement Step Definitions (if new steps)
+---
 
-```typescript
-// step-definitions/login/loginSteps.ts
-When('I perform some action', async function (this: CustomWorld) {
-  await this.loginPage!.performAction();
-});
-```
+## 🎓 Best Practices
 
-### 3. Add Page Methods (if needed)
+✅ Use Page Object Model  
+✅ Keep step definitions simple  
+✅ Reuse common steps  
+✅ Use meaningful scenario names  
+✅ Tag tests appropriately (@smoke, @regression)  
+✅ Keep test data separate  
+✅ Use BasePage for common operations  
+✅ Log important actions  
+✅ Take screenshots on failures  
+✅ Write self-documenting code  
 
-```typescript
-// src/pages/login/LoginPage.ts
-async performAction(): Promise<void> {
-  await this.click(this.someButton);
-}
-```
+---
 
-## 🔄 CI/CD Pipeline
+## 🔧 Troubleshooting
 
-### GitHub Actions
-
-The project includes a complete CI/CD pipeline (`.github/workflows/ci.yml`).
-
-**Triggers:**
-- Push to `main` or `develop` branches
-- Pull requests to `main` or `develop`
-- Manual trigger with environment selection
-- Scheduled nightly runs (2 AM UTC)
-
-**Features:**
-- ✅ Runs on `ubuntu-latest`
-- ✅ Tests on multiple browsers (chromium, firefox)
-- ✅ Parallel execution with 4 shards
-- ✅ Automatic report generation
-- ✅ Screenshot/video upload on failure
-- ✅ Artifact retention (30 days for reports, 7 days for media)
-
-### Running in GitHub Actions
-
-1. **Push to GitHub:**
+### Issue: Browser not installed
 ```bash
-git init
-git add .
-git commit -m "Initial commit - OrangeHRM automation framework"
-git branch -M main
-git remote add origin <your-github-repo-url>
-git push -u origin main
+npx playwright install chromium --with-deps
 ```
 
-2. **GitHub Actions will automatically run tests**
+### Issue: Tests fail locally but pass in CI
+- Check environment variables
+- Verify BASE_URL is correct
+- Check browser version
 
-3. **View results** in GitHub Actions tab
+### Issue: Email not sending
+- Verify GitHub Secrets are set
+- Check Gmail app password
+- See SETUP.md for configuration
 
-### Manual Workflow Trigger
+---
 
-Go to **Actions** → **Playwright Cucumber Tests** → **Run workflow**
+## 📝 Contributing
 
-Select:
-- Environment: `dev`, `qa`, or `staging`
-- Tags: `@smoke`, `@regression`, etc.
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
-## 🐛 Troubleshooting
+---
 
-### Browser Installation Issues
+## 🚀 Tech Stack
 
-If you get certificate errors:
-```bash
-# Use existing browsers from another Playwright installation
-# Or install on a non-corporate network
-```
+| Technology | Purpose |
+|------------|---------|
+| **Playwright** | Browser automation |
+| **Cucumber** | BDD framework |
+| **TypeScript** | Type-safe language |
+| **Winston** | Logging |
+| **Allure** | Test reporting |
+| **Nodemailer** | Email notifications |
+| **Pixelmatch** | Visual regression |
+| **GitHub Actions** | CI/CD |
 
-### TypeScript Errors
+---
 
-Reload VS Code:
-1. Press `Ctrl + Shift + P`
-2. Type "Reload Window"
-3. Press Enter
+## 📊 Current Status
 
-### Tests Failing
+![Tests](https://github.com/Kunal-kankariya/orangehrm-typescript-cucumber-framework/actions/workflows/ci.yml/badge.svg)
 
-Check logs:
-```bash
-cat reports/logs/test-execution-*.log
-cat reports/logs/errors-*.log
-```
+- ✅ Framework: Complete
+- ✅ CI/CD: Configured
+- ✅ Reports: Integrated
+- ✅ Documentation: Complete
+- ✅ Advanced Features: Added
 
-## 📝 Best Practices
-
-1. ✅ Use Page Object Model for all UI interactions
-2. ✅ Use descriptive scenario names
-3. ✅ Tag scenarios appropriately (@smoke, @regression, @critical)
-4. ✅ Keep scenarios independent (no dependencies between tests)
-5. ✅ Use logger instead of console.log
-6. ✅ Follow TypeScript best practices (type safety)
-7. ✅ Clean up after tests (hooks handle this automatically)
-
-## 🔐 Credentials
-
-**OrangeHRM Demo:**
-- URL: https://opensource-demo.orangehrmlive.com/
-- Username: `Admin`
-- Password: `[REDACTED_GENERIC_PASSWORD_1]`
-
-**Note:** These are public demo credentials. Never commit real credentials to Git!
-
-## 📚 Resources
-
-- [Playwright Documentation](https://playwright.dev/)
-- [Cucumber Documentation](https://cucumber.io/docs/cucumber/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- [OrangeHRM Demo](https://opensource-demo.orangehrmlive.com/)
-
-## 🤝 Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Run tests and linting
-4. Commit with descriptive message
-5. Push and create Pull Request
+---
 
 ## 👨‍💻 Author
 
 **Kunal Kankriya**
-- 8+ years experience in QA
-- 4+ years experience with Playwright
-
-## 📄 License
-
-ISC
+- GitHub: [@Kunal-kankariya](https://github.com/Kunal-kankariya)
+- Email: [REDACTED_EMAIL_ADDRESS_2]
 
 ---
 
-**Happy Testing! 🚀**
+## 🙏 Acknowledgments
+
+- [Playwright](https://playwright.dev/)
+- [Cucumber](https://cucumber.io/)
+- [Allure Framework](https://docs.qameta.io/allure/)
+- [OrangeHRM Demo](https://opensource-demo.orangehrmlive.com/)
+
+---
+
+## 📄 License
+
+ISC License
+
+---
+
+🤖 **Generated with [Claude Code](https://claude.com/claude-code)**
+
+---
+
+**⭐ Star this repo if you find it useful!**
+
+**Repository:** https://github.com/Kunal-kankariya/orangehrm-typescript-cucumber-framework
