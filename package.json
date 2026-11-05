@@ -1,0 +1,49 @@
+{
+  "name": "playwright-cucumber-typescript-framework",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Playwright + Cucumber + TypeScript Test Automation Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js --config cucumber.config.js",
+    "test:dev": "ENV=dev cucumber-js --config cucumber.config.js",
+    "test:qa": "ENV=qa cucumber-js --config cucumber.config.js",
+    "test:staging": "ENV=staging cucumber-js --config cucumber.config.js",
+    "test:parallel": "cucumber-js --config cucumber.config.js --parallel 4",
+    "test:smoke": "cucumber-js --config cucumber.config.js --tags '@smoke'",
+    "test:regression": "cucumber-js --config cucumber.config.js --tags '@regression'",
+    "report": "node scripts/generate-report.js",
+    "clean": "rimraf reports test-results",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "typescript",
+    "bdd",
+    "test-automation",
+    "e2e-testing"
+  ],
+  "author": "Kunal Kankriya",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.1",
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "cucumber-html-reporter": "^7.2.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  }
+}

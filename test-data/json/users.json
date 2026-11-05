@@ -1,0 +1,18 @@
+{
+  "users": {
+    "admin": {
+      "username": "Admin",
+      "password": "[REDACTED_GENERIC_PASSWORD_1]",
+      "email": "[email protected]",
+      "role": "admin",
+      "firstName": "Admin",
+      "lastName": "User"
+    },
+    "invalidUser": {
+      "username": "InvalidUser",
+      "password": "wrongpassword",
+      "email": "[email protected]",
+      "role": "user"
+    }
+  }
+}
