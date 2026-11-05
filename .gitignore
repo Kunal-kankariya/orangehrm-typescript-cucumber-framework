@@ -6,7 +6,9 @@ yarn.lock
 # Environment variables
 .env
 .env.local
-*.env
+
+# But allow config env files
+!src/config/env/*.env
 
 # Reports
 reports/
